@@ -1,0 +1,96 @@
+﻿@page "/login"
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using Dapper1.Models
+@using System.Linq;
+
+@inject IUserData _Userdb
+
+@inject NavigationManager UriHelper
+
+<div>
+      <div class="container d-flex align-items-center justify-content-center icube">
+        <h1>Industry/Institution Login</h1>
+      </div>
+
+      <div class="container" style="margin-top: 1%;">
+        <div class="card shadow-2-strong" style="border-radius: 1rem;">
+          <div class="card-body p-5">
+
+            <form class="mt-4">
+
+                <div class="mb-3 mt-3">
+                    <label>Email</label>
+                    <input type="email" class="form-control" placeholder="Enter Username" @bind="@email" @oninput="@((e) => {email = (string?)e.Value;})" />
+                </div>
+
+                <div class="mb-3">
+                    <label>Password</label>
+                    <input type="password" class="form-control" placeholder="Password" @bind="@password" @oninput="@((e) => {password = (string?)e.Value;})" />
+                </div>
+
+                <div class="mb-3 d-flex align-content-center justify-content-center" style="margin-right: 2%;">
+                    <button @onclick="@LoginVerify" type="button" class="me-0 btn btn-dark" id="submitl">Login</button>
+                </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+
+
+</div>
+
+@code {
+    string? email;
+    string? password;
+
+    private List<UserModel>? CurrUser;
+
+    private async Task LoginVerify(){
+        if(email != null){
+            CurrUser = await _Userdb.GetUserEmail(email);
+
+            if (CurrUser != null)
+            {
+                if (CurrUser.Count() == 0)
+                {
+                    Console.WriteLine("User Not Found");
+                }
+                else
+                {
+
+                    if (CurrUser[0].Password == password)
+                    {
+                        Console.WriteLine("Pass Verified, Logging in");
+
+                        if (CurrUser[0].is_expert == 1)
+                        {
+                            UriHelper.NavigateTo($"ExpIndex/{CurrUser[0].Id}");
+                        }
+                        else if (CurrUser[0].is_industry == 1)
+                        {
+                            UriHelper.NavigateTo($"IndIndex/{CurrUser[0].Id}");
+                        }
+                        else if (CurrUser[0].is_admin == 1)
+                        {
+                            UriHelper.NavigateTo("Admin");
+                        }
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Password");
+                    }
+
+                }
+            }
+
+        }
+    }
+
+
+
+}

@@ -1,0 +1,49 @@
+﻿@page "/otp"
+
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using Dapper1.Models
+@inject IOTPData _db
+
+<h3>Otp</h3>
+
+@if (Otps is null)
+{
+    <p>....Loading</p>
+}
+else
+{
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th>Date/Time</th>
+                <th>OTP</th>
+                <th>UserName</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var Otp in Otps)
+            {
+                <tr>
+                    <td>@counter</td>
+                    <td>@Otp.InDate</td>
+                    <td>@Otp.OTP</td>
+                    <td>@Otp.UserId</td>
+                </tr>
+                counter++;
+            }
+        </tbody>
+    </table>}
+
+@code {
+    private List<OtpModel> Otps;
+    protected override async Task OnInitializedAsync()
+    {
+        Otps = await _db.GetOtp();
+    }
+
+    int counter = 1;
+
+}

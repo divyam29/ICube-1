@@ -1,0 +1,82 @@
+﻿@page "/viewissue/{userid}/{id}"
+
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+
+@inject IUserData _UserDb
+@inject IIssueData _IssueDb
+
+<div class="d-flex">
+
+    <Sidebar >
+
+    </Sidebar>
+    <div class="px-5 d-flex flex-column align-items-center w-100 ">
+        <div class="heading mt-3">
+            INDUSTRY-INSTITUTE INTERFACE [I<sup>3</sup>]
+        </div>
+
+     
+
+        <div class="container cont colw">
+            <h1> View Issue</h1>
+        </div>
+
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg">
+                    <div class="container mt-3 col-lg">
+                        <form action="" name="issue_form" method="post">
+                            <div class="mb-3 mt-3 colw">
+                                <label for="issue_heading">Issue Heading: </label>
+                                <input disabled type="text" class="form-control" id="email" placeholder="Write your heading here" name="issue_h" value="@Heading">
+                            </div>
+                            <div class="mb-3 colw">
+                                <label for="issue_desc">Issue: </label>
+
+                                <textarea disabled name="issue_text" class="form-control" placeholder="Write issue here..." id="itx" cols="30" rows="10">@Body</textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm">
+                                    <div class="float-start">
+                                    </div>
+                                    <div class="mb-3 col-sm upload-file-btn">
+                                        <div class="float-end">
+                                            <button type="button" class="btn btn-primary mt-1 float" id="dnl"> Download Attachment</button>
+                                        </div>
+                                        <div class="float-center">
+                                            <a href="./SubResponse/@userid/@id"><button type="button" class="btn btn-success mt-1 float">Submit Response</button></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        </div>
+</div>
+
+@code{
+    [Parameter]
+    public string userid { get; set; }
+
+    [Parameter]
+    public string id { get; set; }
+
+    public List<IssueModel>? Issue;
+
+    public string Heading;
+    public string Body;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Issue = await _IssueDb.GetIssue(Int32.Parse(id));
+
+        Heading = Issue[0].Heading;
+        Body = Issue[0].Body;
+    }
+}

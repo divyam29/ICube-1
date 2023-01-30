@@ -1,0 +1,24 @@
+﻿@using DataAccessLibrary
+@using DataAccessLibrary.Models
+
+@inject IUserData _UserDb
+
+
+<footer>
+    <div class="footer">
+        <p class="footer-text">
+            © Copyright: <a style="color: white" href="https://www.thapar.edu" target="_blank">
+                Thapar
+                Institute of Engineering and Technology
+            </a>
+        </p>
+    </div>
+</footer>
+
+@code{
+    [Parameter]
+    public string username { get; set; }
+
+
+
+}

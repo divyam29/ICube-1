@@ -1,0 +1,144 @@
+﻿@page "/adminresponseall"
+
+
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using Dapper1.Models
+
+@inject IResponseData _Db
+@inject IUserData _UserDb
+
+<div class="d-flex">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidenav">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+            <span class="fs-4">Menu</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li>
+                <a href="./admin" class="nav-link text-white">
+                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2" /></svg>
+                    Back
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="d-flex flex-column align-items-center w-100">
+
+
+        <div class="heading mt-5">
+            INDUSTRY-INSTITUTE INTERFACE [I<sup>3</sup>]
+        </div>
+
+
+        <div class="nvt container d-flex align-item-center justify-content-center mt-1">
+
+            <table class="tables table bg-light table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 2%;">S.No</th>
+                        <th scope="col" style="width: 15%;">Institution Name</th>
+                        <th scope="col" style="width: 5%;">Rating</th>
+                        <th scope="col" style="width: 8%;">Date Posted</th>
+                        <th scope="col" style="width: 2%;">View Response</th>
+                        <th scope="col" style="width: 5%;">Bid Amount</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Responsess is null)
+                    {
+                        <p>loading......</p>
+                    }
+                    else
+                    {
+
+                        @for (var j = 0; j < 6; j++)
+                        {
+
+                            if (Responsess.Count() <= count + j)
+                            {
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>@(
+                                j + 1 + count
+                                )</td>
+                                    <td> @Responsess[count+j].Heading </td>
+                                    <td>
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (Responsess[count + j].Rating >= i)
+                                            {
+                                                <span>&#9733;</span>
+                                            }
+                                            else
+                                            {
+                                                <span>&#9734;</span>
+                                            }
+                                        }
+
+                                    </td>
+                                    <td>@Responsess[count+j].SubmitDate</td>
+                                    <td><a href="/adminresponse/@Responsess[count+j].UserId/@Responsess[count+j].Id" class="unc">View Response</a></td>
+                                    <td>@Responsess[count+j].Amt</td>
+                                </tr>
+                            }
+                        }
+                    }
+
+                    <tr>
+
+                        <td colspan="6">
+
+                            <nav aria-label="Page navigation example" class="mx-3 my-3 d-flex w-100">
+                                <ul class="w-100 pagination justify-content-center align-items-center">
+                                    <li class="page-item"><a class="page-link" onclick="@prevcount">Previous</a></li>
+                                    <li class="page-item"><a class="page-link" onclick="@nextcount">Next</a></li>
+                                </ul>
+                            </nav>
+
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+
+
+        </div>
+
+    </div>
+</div>
+
+
+
+@code {
+    public List<IssueModel>? Issues;
+    public List<ResponseModel>? Responsess;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Responsess = await _Db.GetResponses();
+    }
+
+    public int count = 0;
+	private void nextcount(){
+		if (count + 6 <= Responsess.Count())
+		{
+			count += 6;
+		}
+	}
+
+	private void prevcount(){
+		if(count-1 >= 0){
+			count -= 6;
+		}
+	}
+
+    int counter = 1;
+}

@@ -1,0 +1,244 @@
+﻿@page "/Register"
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using Dapper1.Models
+@using MailKit.Net.Smtp;
+@using MailKit;
+@using MailKit.Security
+@using MimeKit;
+
+@using System.IO;
+@using System.Text
+@using MimeKit.Text
+
+
+@inject IUserData _Userdb
+@inject IOTPData _otpdb
+
+@inject NavigationManager NavigationManager
+
+
+<div class="heading">
+    INDUSTRY-INSTITUTE INTERFACE [ICube]
+</div>
+
+
+<div class="container d-flex align-items-center justify-content-center colw">
+    <h1>Industry/Institution Registration</h1>
+</div>
+<div class="container" style="margin-top: 1%;">
+    <div class="card shadow-2-strong" style="border-radius: 1rem;">
+        <div class="card-body p-5 ">
+            <EditForm class="mt-4 row" Model="@newUser" OnValidSubmit="@Otpgen">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="col">
+
+                    <div class="mb-3 mt-3">
+                        <label for="ind_name" class="req">Organization Name* </label>
+                        <InputText type="text" class="form-control" id="orgname" placeholder="Enter Organization Name" @bind-Value="newUser.OrgName" />
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label for="desg_name" class="req">Designation* </label>
+                        <InputText type="text" class="form-control" id="desg" placeholder="Enter Your Designation" @bind-Value="newUser.desig" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="ind_reg_no">Organization Address*</label>
+                        <InputTextArea type="text" rows="5" class="form-control" id="orgaddress" placeholder="Organization Address" @bind-Value="newUser.OrgAddress" />
+                    </div>
+
+                    <label for="org_type">Organization Type*</label>
+                    <div class="mb-3 mt-2   ">
+                        <InputSelect class="form-control" @bind-Value="newUser.Role">
+                            <option disabled selected hidden>Organization Type</option>
+                            <option>Expert</option>
+                            <option>Business</option>
+                        </InputSelect>
+                    </div>
+
+                </div>
+
+                <div class="col">
+
+                    <div class="mb-3 mt-3">
+                        <label for="ind_name">Phone* </label>
+                        <InputText type="text" class="form-control" id="orgphone" placeholder="Phone Number"
+                                   @bind-Value="newUser.Phone" />
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label for="ind_name">E-Mail* </label>
+                        <InputText type="email" class="form-control" id="username" aria-describedby="emailHelp"
+                                   placeholder="Enter Email" @bind-Value="newUser.UserName" />
+                    </div>
+
+                    <div class="row">
+
+                        <div class="mb-3 mt-3 col">
+                            <label for="ind_name">Password* </label>
+                            <InputText type="password" class="form-control" aria-describedby="emailHelp"
+                                       placeholder="Password" @bind-Value="newUser.Password" />
+                        </div>
+
+                        <div class="mb-3 mt-3 col">
+                            <label for="ind_name">Confirm Password* </label>
+                            <Input type="password" class="form-control" aria-describedby="emailHelp"
+                                       placeholder="Confirm Password" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Upload Supporting Documents:</label>
+                        <input class="form-control mt-0  " type="file" id="formFile" name="upl_doc">
+                    </div>
+
+
+
+
+                    <div class="mb-3 d-flex align-content-end justify-content-end" style="margin-right: 2%;">
+                        <button type="submit" class="me-0 btn btn-dark" id="submit">Submit</button>
+                    </div>
+
+                </div>
+            </EditForm>
+
+
+            <div class="row">
+               
+                <div class="col mt-0">
+
+                    </div>
+                <div class="col mt-0">
+
+               
+            <Form hidden = "@otphide">
+                <div id="otp_div">
+                    <div class="mb-3 mt-5">
+                        <label for="OTP">Enter OTP:</label>
+                        <br><span><i>OTP sent on Phone: and on E-mail: </i></span>
+                         <input type="text" class="form-control" placeholder="Enter OTP" @bind="@OtpValue" @oninput="@((e) => {OtpValue = e.Value.ToString();} )" />
+                    </div>
+                    <div class="float-end">
+                        <button type="button" id="" onclick="@OTPVerification" class=" me-0 btn btn-primary">Verify</button>
+                    </div>
+                </div>
+            </Form>
+                </div>
+
+            <div onclick="@LogRedirect">
+                <p>Already have an account? <a>Sign in</a> </p>
+            </div>
+            </div>
+        </div>
+ 
+    </div>
+
+</div>
+
+
+@code {
+    private UserDisplayModel newUser = new UserDisplayModel();
+
+    string OtpValue;
+    int OTP;
+
+    string file;
+
+    bool otphide = true;
+
+    private void LogRedirect(){
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private async Task Otpgen()
+    {
+        Random rnd = new Random();
+        OTP =  rnd.Next(10000, 99999);
+        string datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        DateTime InDate = DateTime.Parse(datetime);
+
+        OtpModel newotp = new OtpModel
+            {
+                InDate = InDate,
+                OTP = OTP,
+                UserId = newUser.UserName
+            };
+
+        await _otpdb.InsertOtp(newotp);
+
+        await SendMail(OTP, newUser.UserName);
+
+    }
+
+    private async Task SendMail(int otp, string email)
+    {
+
+        try
+        {
+            var client = new MimeMessage();
+            client.From.Add(MailboxAddress.Parse("mesaaransh@gmail.com"));
+            client.To.Add(MailboxAddress.Parse(email));
+            client.Subject = "ICUBE OTP";
+            client.Body = new TextPart(TextFormat.Plain) { Text = "Your OTP For Login is: " + otp };
+
+            // send email
+            using var smtp = new SmtpClient();
+            smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+            smtp.Authenticate("mesaaransh@gmail.com", "caqyvzbhsdjoyjnm");
+            smtp.Send(client);
+            smtp.Disconnect(true);
+
+            otphide = false;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            otphide = true;
+        }
+
+    }
+
+    private async Task OTPVerification()
+    {
+        if (Int32.Parse(OtpValue) == OTP)
+        {
+            Console.WriteLine("Verified");
+            await InsertUser();
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            Console.WriteLine("Not Verified");
+        }
+    }
+
+
+    public int IsExpert, IsIndustry, IsAdmin = 0;
+
+    private async Task InsertUser()
+    {
+
+        if(newUser.Role == "Expert"){
+            IsExpert = 1;
+        } else if(newUser.Role == "Business"){
+            IsIndustry = 1;
+        }
+
+        UserModel p = new UserModel
+            {
+                OrgName = newUser.OrgName,
+                OrgAddress = newUser.OrgAddress,
+                desig = newUser.desig,
+                Phone = newUser.Phone,
+                UserName = newUser.UserName,
+                Password = newUser.Password,
+                is_expert = IsExpert,
+                is_industry = IsIndustry,
+                is_admin = IsAdmin
+            };  
+
+        await _Userdb.InsertUser(p);
+
+        newUser = new UserDisplayModel();
+    }
+}

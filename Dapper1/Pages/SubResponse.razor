@@ -1,0 +1,221 @@
+﻿@page "/SubResponse/{userid}/{id}"
+
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using Dapper1.Models
+
+@inject IIssueData _IssueDb
+@inject IResponseData _ResDb
+@inject IUserData _UserDb
+
+<div class="d-flex">
+
+    <Sidebar>
+
+    </Sidebar>
+    <div class="px-5 d-flex flex-column align-items-center w-100 ">
+        <div class="heading mt-3">
+            INDUSTRY-INSTITUTE INTERFACE [I<sup>3</sup>]
+        </div>
+
+        <div class="container cont colw">
+            <h1>Issue</h1>
+        </div>
+
+        <div class="container colw">
+
+            <EditForm Model="@newResponse" OnValidSubmit="@InsertResponse">
+            <div class="row">
+                <div class="col-lg ">
+                    <div class="container mt-3 col-lg ">
+                        <div class="soln">
+
+                            <div class="mb-3">
+                                
+                                <label for="issue_desc">Heading: </label>
+                                    <InputTextArea class="form-control" @bind-Value="newResponse.Heading"
+                                            placeholder="Write response here..." id="itx" cols="30" rows="1"></InputTextArea>
+
+                            </div>
+                            <div class="mb-3">
+
+                                <label for="issue_desc">Proposed Technology: </label>
+                                <InputTextArea class="form-control" @bind-Value="newResponse.Prop_Tech"
+                                            placeholder="Write response here..." id="itx" cols="30" rows="1"></InputTextArea>
+
+                            </div>
+                            <div class="mb-3">
+
+                                <label for="issue_desc">Breif About Technology: </label>
+                                    <InputTextArea required name="issue_text" class="form-control" @bind-Value="newResponse.Body"
+                                            placeholder="Write response here..." id="itx" cols="30" rows="5"></InputTextArea>
+
+
+                            </div>
+                            <div class="mb-3">
+
+                                <label for="issue_desc">Deliverables: </label>
+                                <InputTextArea required name="issue_text" class="form-control"
+                                            @bind-Value="newResponse.Deli" placeholder="Write response here..." id="itx" cols="30" rows="5"></InputTextArea>
+
+
+                            </div>
+                            <div class="mb-3">
+
+                                <label for="issue_desc">Field 1:</label>
+                                <TextArea required name="issue_text" class="form-control" 
+                                            placeholder="Write response here..." id="itx" cols="30" rows="5"></TextArea>
+
+
+                            </div>
+                            <div class="mb-3">
+
+                                <label for="issue_desc">Field 2: </label>
+                                <TextArea required name="issue_text" class="form-control"
+                                            placeholder="Write response here..." id="itx" cols="30" rows="5"></TextArea>
+
+
+                            </div>
+                            <div class="mb-3">
+
+                                <label for="issue_desc">Field 3: </label>
+                                <TextArea required name="issue_text" class="form-control"
+                                            placeholder="Write response here..." id="itx" cols="30" rows="5"></TextArea>
+
+
+                            </div>
+                            <div class="mb-3">
+
+                                <label for="issue_desc">Bid Amount: </label>
+                                <InputNumber @bind-Value="newResponse.BidAmt" type="number" class="form-control"/>
+
+                            </div>
+                            <div class="mb-3">
+
+                                <label for="issue_desc">Bid Ammount Bifurcation: </label>
+                                <InputTextArea @bind-Value="newResponse.Amt_Bifur" class="form-control" />
+
+                            </div>
+                            <div class="mb-3">
+
+                                <label for="issue_desc">TRL Level: </label>
+                                <InputSelect class="form-control" @bind-Value="newResponse.trl">
+                                    <option selected hidden disabled>TRL LEVEL</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </InputSelect>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg h-100">
+                    <h3>Submitter Detail</h3>
+                    <div class="container mt-3 col-lg h-100">
+                        <div class="mb-3 mt-3">
+                            <label for="upd_name">Name: </label>
+                            <input disabled type="text" class="form-control" id="upd_name"
+                                   name="upd_name" value="@name">
+                        </div>
+                        <div class="mb-3 mt-3">
+                            <label for="upd_desg">Desigination: </label>
+                            <input disabled type="text" class="form-control" id="upd_desg"
+                                   name="upd_desg" value="@desig">
+                        </div>
+                        <div class="mb-3 mt-3">
+                            <label for="upd_email">E-mail: </label>
+                            <input disabled type="email" class="form-control" id="upd_email"
+                                   name="upd_email" value="@email">
+                        </div>
+                        <div class="mb-3 mt-3">
+                            <label for="upd_phone">Phone: </label>
+                            <input disabled type="number" class="form-control" id="upd_phone"
+                                   name="upd_phone" value="@phone">
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-success float-end " id="submit">
+                                Submit
+                                Response
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </EditForm>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string userid { get; set; }
+
+    [Parameter]
+    public string id { get; set; }
+
+    public ResponseDisplayModel newResponse = new ResponseDisplayModel();
+    public List<UserModel> CUser;
+
+    public string name;
+    public string desig;
+    public string email;
+    public string phone;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CUser = await _UserDb.GetUser(Int32.Parse(userid));
+
+        name = CUser[0].OrgName;
+        desig = CUser[0].desig;
+        email = CUser[0].UserName;
+        phone = CUser[0].Phone;
+
+    }
+
+    public int trl = 0;
+
+    private async Task InsertResponse()
+    {
+        string datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        DateTime InDate = DateTime.Parse(datetime);
+
+        Console.WriteLine(newResponse.trl);
+
+        if(newResponse.trl == "1"){
+            trl = 1;
+        } 
+        else if(newResponse.trl == "2"){
+            trl = 2;
+        }
+        else if (newResponse.trl == "3")
+        {
+            trl = 3;
+        }
+        else if (newResponse.trl == "4")
+        {
+            trl = 4;
+        }
+
+        Console.WriteLine(trl);
+
+        ResponseModel p = new ResponseModel
+            {
+                Heading = newResponse.Heading,
+                Body = newResponse.Body,
+                Prop_Tech = newResponse.Prop_Tech,
+                Deli = newResponse.Deli,
+                Amt_Bifur = newResponse.Amt_Bifur,
+                trl = trl,
+                Amt = newResponse.BidAmt,
+                Issue_Id = Int32.Parse(id),
+                UserId = Int32.Parse(userid),
+                SubmitDate = InDate,
+                UpdateDate = InDate,
+                is_approved = 0
+            };
+        await _ResDb.AddResponse(p);
+    }
+    }

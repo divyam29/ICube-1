@@ -1,0 +1,151 @@
+﻿@page "/Response/{email}/{id}"
+
+
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using Dapper1.Models
+
+@inject IResponseData _Db
+
+<div class="d-flex">
+	<Sidebar>
+
+	</Sidebar>
+	<div class="d-flex flex-column align-items-center w-100">
+
+
+	<div class="heading mt-5">
+		INDUSTRY-INSTITUTE INTERFACE [ICube]
+	</div>
+
+
+	<div class="container-sm mt-5 sel">
+		<div class="row">
+			<div class="col">
+				<select class="form-select" name="" id="" style="width: 10rem;">
+					<option value="" selected disabled hidden>Sort By:</option>
+					<option value="instname">Institute Name</option>
+					<option value="dateposted">Date Posted</option>
+					<option value="bidamt">Bid Amount</option>
+					<option value="">Rating </option>
+				</select>
+			</div>
+		
+		</div>
+	</div>
+	<div class="nvt container d-flex align-item-center justify-content-center mt-1">
+
+		<table class="tables table bg-light table-bordered">
+			<thead>
+				<tr>
+					<th scope="col" style="width: 2%;">S.No</th>
+					<th scope="col" style="width: 15%;">Institution Name</th>
+					<th scope="col" style="width: 5%;">Rating</th>
+					<th scope="col" style="width: 8%;">Date Posted</th>
+					<th scope="col" style="width: 2%;">Attachment</th>
+					<th scope="col" style="width: 5%;">Bid Amount</th>
+
+				</tr>
+			</thead>
+			<tbody>
+				@if (Responsess is null)
+				{
+					<p>loading......</p>
+				}
+				else
+				{
+
+					@for (var j = 0; j < 6; j++)
+					{
+
+						if(Responsess.Count() <= count+j){
+
+						} else {
+							<tr>
+								<td>@(j + 1 + count)</td>
+								<td> @Responsess[count+j].Heading </td>
+								<td>
+									@for (int i = 1; i <= 5; i++)
+									{
+										if (Responsess[count + j].Rating >= i)
+										{
+											<span>&#9733;</span>
+										}
+										else
+										{
+											<span>&#9734;</span>
+										}
+									}
+
+								</td>
+								<td>@Responsess[count+j].SubmitDate</td>
+								<td><a href="#" class="unc">&#128462;</a></td>
+								<td>@Responsess[count+j].Amt</td>
+							</tr>
+						}
+					}
+				}
+
+				<tr>
+
+					<td colspan="6">
+
+						<nav aria-label="Page navigation example" class="mx-3 my-3 d-flex w-100">
+							<ul class="w-100 pagination justify-content-center align-items-center">
+								<li class="page-item"><a class="page-link" onclick="@prevcount">Previous</a></li>
+								<li class="page-item"><a class="page-link" onclick="@nextcount">Next</a></li>
+							</ul>
+						</nav>
+
+					</td>
+
+				</tr>
+			</tbody>
+		</table>
+
+		
+
+
+
+	</div>
+
+	</div>
+</div>
+
+
+
+@code {
+
+	[Parameter]
+	public string? email { get; set; }
+
+	[Parameter]
+	public string? id { get; set; }
+
+	
+
+	public List<IssueModel>? Issues;
+	public List<ResponseModel>? Responsess;
+	protected override async Task OnInitializedAsync()
+	{
+		Responsess = await _Db.GetResponse(Int32.Parse(id));
+		Console.Write(Responsess.Count());
+	}
+
+	public int count = 0;
+	private void nextcount(){
+		if (count + 6 <= Responsess.Count())
+		{
+			count += 6;
+		}
+	}
+
+	private void prevcount(){
+		if(count-1 >= 0){
+			count -= 6;
+		}
+	}
+
+
+	int counter = 1;
+}

@@ -1,0 +1,103 @@
+﻿
+
+@page "/adminissues"
+
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using Dapper1.Models
+
+@inject IIssueData _IssueDb
+@inject IUserData _UserDb
+
+<div class="d-flex">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidenav">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+            <span class="fs-4">Menu</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li>
+                <a href="./admin" class="nav-link text-white">
+                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2" /></svg>
+                    Back
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="px-5 d-flex flex-column align-items-center w-100 ">
+        <div class="heading mt-3">
+            INDUSTRY-INSTITUTE INTERFACE [I<sup>3</sup>]
+        </div>
+
+        <div class="container accordion mt-5" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#obj1" aria-expanded="false" aria-controls="obj1">
+                        <span id="IssueHeading" style="width: 50%;">1| Problem-Heading</span>
+                        <span id="DatePosted" style="width: 30%;">Date Posted: 01/12/2022</span>
+                        <span id="Response" style="width: 20%;" data-toggle="tooltip"
+                              title="Industry Name">Industry-Name</span>
+                    </button>
+                </h2>
+
+                <div id="obj1" class="accordion-collapse collapse" aria-labelledby="head"
+                     data-bs-parent="#accordionExample">
+                    <div class="accordion-body mb-0 btmbdr" id="IssueBody">
+                        <center> <strong>Problem-Statement</strong> </center>
+                        <ul>
+                            <li>Field 1</li>
+                            <li>Field 2</li>
+                            <li>Field 3</li>
+                            <li>Field 4</li>
+                            <li>Field 5</li>
+
+                        </ul>
+                        <br>
+
+                        <div style="float:left;" class="mx-1">
+                            <a href="./AdminIndex.html?id=1&resp=0">
+                                <button class="btn btn-danger mt-2">Reject</button>
+                            </a>
+                        </div>
+                        <a href="./AdminIndex.html?id=1&resp=1">
+                            <button class="btn btn-success mt-2">Approve</button>
+                        </a>
+                        <span class="float-end" id="DateUpdated"><mark> Updated On: 28/11/2022 </mark></span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+<footer>
+    <div class="footer">
+        <p class="footer-text">s
+            © Copyright: <a style="color: white" href="https://www.thapar.edu" target="_blank">
+                Thapar
+                Institute of Engineering and Technology
+            </a>
+        </p>
+    </div>
+</footer>
+
+
+@code {
+
+    public List<UserModel> CUser;
+    public List<IssueModel>? Issues;
+    protected override async Task OnInitializedAsync()
+    {
+        Issues = await _IssueDb.GetIssues();
+
+    }
+    int counter = 1;
+
+}

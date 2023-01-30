@@ -1,0 +1,291 @@
+﻿@page "/adminresponse/{userid}/{id}"
+
+
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using Dapper1.Models
+
+@inject IResponseData _ResDb
+@inject IUserData _UserDb
+
+<div class="d-flex">
+
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidenav">
+        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+            <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+            <span class="fs-4">Menu</span>
+        </a>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li>
+                <a href="./adminresponseall" class="nav-link text-white">
+                    <svg class="bi me-2" width="16" height="16"><use xlink:href="#speedometer2" /></svg>
+                    Back
+                </a>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="px-5 d-flex flex-column align-items-center w-100 ">
+        <div class="heading mt-3">
+            INDUSTRY-INSTITUTE INTERFACE [I<sup>3</sup>]
+        </div>
+        <div class="adrb">
+
+            <div class="container cont colw">
+                <h1>Submit issue</h1>
+            </div>
+
+            <div class="container colw">
+                <div class="row">
+                    <EditForm class="row" Model="@adminResponse" OnValidSubmit="@ApproveResponse">
+                    <div class="col ">
+                        <div class="container mt-3 col-lg ">
+                                <div class="soln">
+
+                                    <div class="mb-3">
+
+                                        <label for="issue_desc">Proposed Technology: </label>
+
+                                        <div class="card cardstyle">
+                                            <div class="card-body">
+                                                <p class="card-text">@pt</p>
+                                            </div>
+                                        </div>
+                                        <label>Check to allow</label>
+                                        <InputCheckbox @bind-Value="adminResponse.dpt" />
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="issue_desc">Breif About Technology: </label>
+                                        <div class="card cardstyle">
+                                            <div class="card-body">
+                                                <p class="card-text">@body</p>
+                                            </div>
+                                        </div>
+                                        <label>Check to allow</label>
+                                        <InputCheckbox @bind-Value="adminResponse.dbody" />
+                                    </div>
+                                    <div class="mb-3">
+
+                                        <label for="issue_desc">Deliverables: </label>
+                                        <div class="card cardstyle">
+                                            <div class="card-body">
+                                                <p class="card-text">@deli</p>
+                                            </div>
+                                        </div>
+                                        <label>Check to allow</label>
+                                        <InputCheckbox @bind-Value="adminResponse.ddeli" />
+
+
+                                    </div>
+                                    <div class="mb-3">
+
+                                        <label for="issue_desc">Bid Amount: </label>
+                                        <div class="card cardstyle">
+                                            <div class="card-body">
+                                                <p class="card-text">@amt</p>
+                                            </div>
+                                        </div>
+                                        <label>Check to allow</label>
+                                        <InputCheckbox @bind-Value="adminResponse.damt" />
+
+
+                                    </div>
+
+                                    <div class="mb-3">
+
+                                        <label for="issue_desc">Ammount Bifurcation: </label>
+                                        <div class="card cardstyle">
+                                            <div class="card-body">
+                                                <p class="card-text">@amtb</p>
+                                            </div>
+                                        </div>
+                                        <label>Check to allow</label>
+                                        <InputCheckbox @bind-Value="adminResponse.damtb" />
+                                        
+                                    </div>
+
+                                    <div class="mb-3">
+
+                                        <label for="issue_desc">TRL Level: </label>
+                                        <div class="card cardstyle">
+                                            <div class="card-body">
+                                                <p class="card-text">@trl</p>
+                                            </div>
+                                        </div>
+                                        <label>Check to allow</label>
+                                        <InputCheckbox @bind-Value="adminResponse.dtrl"  />
+                                    </div>
+
+
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h3>Submitter Detail</h3>
+
+                        <div class="container mt-3 col-lg h-100 sbmd">
+                            <div class="mb-3 mt-3">
+                                <label for="upd_name">Name: </label>
+                                <div class="card cardstyles">
+                                    <div class="card-body">
+                                        <p class="card-text">@name</p>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="mb-3 mt-3">
+                                <label for="upd_desg">Desigination: </label>
+                                <div class="card cardstyles">
+                                    <div class="card-body">
+                                        <p class="card-text">@desig</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="mb-3 mt-3">
+                                <label for="upd_email">E-mail: </label>
+                                <div class="card cardstyles">
+                                    <div class="card-body">
+                                        <p class="card-text">@email</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="mb-3 mt-3">
+                                <label for="upd_phone">Phone: </label>
+                                <div class="card cardstyles">
+                                    <div class="card-body">
+                                        <p class="card-text">@phone</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <label>Show Contact Info: </label>
+                                <InputCheckbox @bind-Value="adminResponse.dcontinfo" />
+
+                            @*condition on reject button click*@
+                            <div class="mb-3 mt-3">
+                                <label for="upd_phone">Reason for rejection: </label>
+                                <input type="text" class="form-control" id="" placeholder="Reason for rejection"
+                                       name="upd_phone" value="">
+                            </div>
+                            @*condition ends*@
+
+                            <div class="row">
+
+
+                                <div class="col">
+                                    <button type="submit" class="btn btn-success float-end ">Approve</button>
+                                </div>
+                                <div class="col">
+                                    <button type="button" class="btn btn-danger float-end" id="submit">Reject</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string userid { get; set; }
+
+    [Parameter]
+    public string id { get; set; }
+
+    public List<ResponseModel> Res;
+    public List<UserModel> CUser;
+
+    public string name;
+    public string desig;
+    public string email;
+    public string phone;
+
+    public string pt;
+    public string deli;
+    public int trl;
+    public string amtb;
+    public string heading;
+    public string body;
+    public int amt;
+
+    public ResponseDisplayModel adminResponse = new ResponseDisplayModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Res = await _ResDb.GetResponse(Int32.Parse(id));
+        CUser = await _UserDb.GetUser(Int32.Parse(userid));
+
+        Console.WriteLine(Res.Count);
+
+        name = CUser[0].OrgName;
+        desig = CUser[0].desig;
+        email = CUser[0].UserName;
+        phone = CUser[0].Phone;
+
+        pt = Res[0].Prop_Tech;
+        deli = Res[0].Deli;
+        trl = Res[0].trl;
+        heading = Res[0].Heading;
+        body = Res[0].Body;
+        amt = Res[0].Amt;
+        amtb = Res[0].Amt_Bifur;
+
+
+        /*if (adminResponse.trl == "1")
+        {
+            trl = 1;
+        }
+        else if (adminResponse.trl == "2")
+        {
+            trl = 2;
+        }
+        else if (adminResponse.trl == "3")
+        {
+            trl = 3;
+        }
+        else if (adminResponse.trl == "4")
+        {
+            trl = 4;
+        }*/
+
+    }
+
+    private async Task ApproveResponse()
+    {
+        string datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        DateTime InDate = DateTime.Parse(datetime);
+
+        ResponseModel p = new ResponseModel
+            {
+                is_approved = 1,
+                damt = Convert.ToInt32(adminResponse.damt),
+                dbody = Convert.ToInt32(adminResponse.dbody),
+                dhead = Convert.ToInt32(adminResponse.dhead),
+                damtb = Convert.ToInt32(adminResponse.damtb),
+                dtrl = Convert.ToInt32(adminResponse.dtrl),
+                dpt = Convert.ToInt32(adminResponse.dpt),
+                ddeli = Convert.ToInt32(adminResponse.ddeli),
+                dcontinfo = Convert.ToInt32(adminResponse.dcontinfo)
+            };
+        await _ResDb.UpdateResponse(Int32.Parse(id), p);
+    }
+
+    int counter = 1;
+
+}

@@ -1,0 +1,109 @@
+﻿@page "/"
+@inject NavigationManager NavigationManager
+
+<PageTitle>Index</PageTitle>
+
+<div class="heading">
+      INDUSTRY-INSTITUTE INTERFACE [ICube]
+    </div>
+
+
+    <div class="icube">
+      Industry-Institute Interface [ICube] is a joint venture by the Thapar Institute of Engineering and Technology and the Punjab Pollution Control Board to bridge the gap between Industries and top Experts/Institutes.<br>
+      It is a hassle-free one-stop platform for all the technical solutions to the existing problems of industries through the intervention of the scientific community.<br>
+      Every submitted problem, on this platform, by the Industries will be dealt with full confidentiality, security, and privacy... <a style= "color: white" href="readmore.html">READ MORE</a>
+    </div>
+
+
+    <div class="buttons">
+      <center>
+        <a onclick="@LogRedirect"><button class="button1">Login</button></a>
+        <a onclick="@RegRedirect"><button class="button2">Sign Up</button></a>
+      </center>
+    </div>
+
+
+    <div class="container1">
+
+
+
+              <div class="box1">
+                  <center>
+
+                      <h1 class="box1-heading">
+                          <span style="font-size: 60%"> About </span> TIET
+                      </h1>
+
+                      <div class="box1-content">
+
+
+                          <p>
+                              <ul style="text-align: left;">
+                                  <li>
+                                      The Thapar Institute of Engineering and Technology (TIET) is one of India's oldest and finest educational institutions
+                                  </li>
+                                  <li>
+                                      Founded in 1956 with a campus spread across sprawling 250 acres
+                                  </li>
+                                  <li>
+                                      Thapar Institute of Engineering & Technology, located in Patiala, has been a pioneer in engineering education
+                                  </li>
+                                  <li>
+                                      Its community involves ingenious minds solvers who are eager to make the world a better place to live in with their innovative techniques and discoveries.
+                                  </li>
+                                  <li>
+                                      TIET has a vision to be recognized as a leader committed to excellence in higher education, research and innovation that meets the aspirations of the global community.
+                                  </li>
+                              </ul>
+                              <!-- , which provides a steady source of highly skilled talent to the nation as well as overseas. , , research and innovation. TIET has been consistently redefining and revolutionizing Indian engineering education by unlocking the beauty of engineering and applied sciences. The Industry-Institute Interface [ICube] is one of the endeavors which TIET has taken up in collaboration with PPCB to provide IT solutions of the challenges faced by industries regarding pollution etc... <a style= "color: white" href="readmore.html">READ MORE</a> -->
+                          </p>
+                          </div>
+</center>
+              </div>
+
+
+              <div class="box2">
+                <center>
+                  <h1 class="box2-heading">
+                    <span style="font-size: 60%"> About </span> PPCB
+                  </h1>
+                    <div class="box2-content">
+
+
+                  <p>
+                      <ul style="text-align: left;">
+                          <li>
+                              Punjab Pollution Control Board (PPCB) in the State of Punjab was constituted in the year 1975 and has been entrusted the task of implementation of environmental laws in the State of Punjab.
+                          </li>
+                          <li>
+                              For broad environmental issues endangering the health & safety of our people as well as of our flora and fauna and also to check environmental degradation, the Parliament of India has enacted several laws.
+                          </li>
+                          <li>
+                              Subsequently, with the enactment of other environmental laws like management of Hazardous Waste, Bio Medical Waste, Municipal Solid Waste, Recycled Plastic, Used Batteries, Control of Noise Pollution and Protection of Ozone Layer etc.
+                          </li>
+                          <li>
+                              ICube is another big step in this direction which is being developed in collaboration with Thapar Institute of Engineering and Technology (TIET)...
+                          </li>
+                      </ul>
+                      <!-- , the responsibility to implement the provisions of such laws was also entrusted to the PPCB in the State of Punjab. Out of many diverse working areas, some of the other important functions of PPCB includes supporting and encouraging the developments in the fields of pollution control, waste recycle reuse, eco-friendly practices etc.  <a style= "color: white" href="readmore.html">READ MORE</a> -->
+                  </p>
+                    </div>
+                </center>
+              </div>
+
+
+
+    </div>
+
+
+@code{
+    private void LogRedirect()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private void RegRedirect()
+    {
+        NavigationManager.NavigateTo("/Register");
+    }
+}

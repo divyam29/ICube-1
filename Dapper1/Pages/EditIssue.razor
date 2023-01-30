@@ -1,0 +1,144 @@
+﻿@page "/EditIssue/{userid}/{id}"
+
+
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using Dapper1.Models
+
+@inject IIssueData _IssueDb
+@inject IUserData _UserDb
+
+<div class="d-flex">
+
+    <Sidebar>
+
+    </Sidebar>
+
+    <div class="px-5 d-flex flex-column align-items-center w-100 ">
+        <div class="heading mt-3">
+            INDUSTRY-INSTITUTE INTERFACE [ICube]
+        </div>
+
+        <div class="container cont colw">
+            <h1>Edit issue</h1>
+        </div>
+    
+        <div class="container colw">
+            <div class="row">
+                <div class="col">
+                    <div class="container mt-1 col-lg">
+                        <EditForm Model="@newIssue" OnValidSubmit="@UpdateIssue">
+                            <div class="mb-3 mt-3">
+                                <label for="issue_heading">Issue Heading: </label>
+                                <InputText type="text" class="form-control"  placeholder="Write your heading here" @bind-Value="Heading"/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="issue_desc">Issue: </label>
+                                <InputTextArea class="form-control" placeholder="Write issue here..." cols="30" rows="10" @bind-Value="Body">Lorem Ipsum</InputTextArea>
+                            </div>
+                            <div class="row">
+                                <div class="mb-3">
+                                    <label for="formFile" class="form-label">Upload Supporting Documents:</label>
+                                    <br><span><i>Kindly upload only .zip file,</i></span>
+                                    <span><i>Click</i> <a target="_blank" href="https://www.win-rar.com/">here</a> <i>to download winrar to zip your files.</i></span>
+                                </div>
+                                <div class="col-sm">
+                                    <input class="form-control mt-2 " type="file" id="formFile" name="upl_doc">
+                                </div>
+                               
+                                <div class="col-sm mt-2 float-end upload-file-btn">
+                                    <button type="button" class="btn btn-primary" id="upl">Upload Now</button>
+                                    <button type="button" class="btn btn-primary mt-2" id="dnl">Download Previous Files</button>
+                                </div>
+
+
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-success" id="submit">Submit</button>
+                                </div>
+
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            
+                <div class="col h-100 colw">
+                    <h3>Submitter Detail</h3>
+                    <div class="container mt-3 col-lg h-100">
+                        <form action="IndustryIndex.html">
+                            <div class="mb-3 mt-3">
+                                <label for="upd_name">Name: </label>
+                                <input disabled type="text" class="form-control" id="upd_name" placeholder="" name="upd_name" value="@name">
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <label for="upd_desg">Desigination: </label>
+                                <input disabled type="text" class="form-control" id="upd_desg" placeholder="" name="upd_desg" value="@desig">
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <label for="upd_email">E-mail: </label>
+                                <input disabled type="email" class="form-control" id="upd_email" placeholder="" name="upd_email" value="@email">
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <label for="upd_phone">Phone: </label>
+                                <input disabled type="number" class="form-control" id="upd_phone" placeholder="" name="upd_phone" value="@phone">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+    [Parameter]
+    public string userid { get; set; }
+
+    [Parameter]
+    public string id { get; set; }
+
+    public List<IssueModel>? Issue;
+    public List<UserModel> CUser;
+
+    public string name;
+    public string desig;
+    public string email;
+    public string phone;
+
+    public string Heading;
+    public string Body;
+
+    private SubIssueModel? newIssue = new SubIssueModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        CUser = await _UserDb.GetUser(Int32.Parse(userid));
+        Issue = await _IssueDb.GetIssue(Int32.Parse(id));
+        name = CUser[0].OrgName;
+        desig = CUser[0].desig;
+        email = CUser[0].UserName;
+        phone = CUser[0].Phone;
+
+        Heading = Issue[0].Heading;
+        Body = Issue[0].Body;
+    }
+
+    private async Task UpdateIssue()
+    {
+        string datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        DateTime InDate = DateTime.Parse(datetime);
+
+        IssueModel p = new IssueModel
+            {
+                Heading = Heading,
+                Body = Body,
+                UserId = id,
+                UpdateDate = InDate
+            };
+
+        await _IssueDb.UpdateIssue(Int32.Parse(id), p);
+        newIssue = new SubIssueModel();
+    }
+}
