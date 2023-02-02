@@ -31,7 +31,7 @@ namespace DataAccessLibrary
         public Task InsertUser(UserModel person)
         {
             string sql = @"insert into dbo.Users (UserName, Orgname, OrgAddress, desig, Phone, Password, is_expert, is_industry, is_admin)
-                           values (@UserName, @OrgName, @OrgAddress, @desig, @Phone, @Password, @IsExpert, @IsIndustry, @IsAdmin);";
+                           values (@UserName, @OrgName, @OrgAddress, @desig, @Phone, @Password, @is_expert, @is_industry, @is_admin);";
 
             return _Userdb.SaveData(sql, person);
         }

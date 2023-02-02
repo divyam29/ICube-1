@@ -4,6 +4,10 @@
 @using Dapper1.Models
 @using System.Linq;
 
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 @inject IUserData _Userdb
 
 @inject NavigationManager UriHelper
@@ -64,8 +68,6 @@
 
                     if (CurrUser[0].Password == password)
                     {
-                        Console.WriteLine("Pass Verified, Logging in");
-
                         if (CurrUser[0].is_expert == 1)
                         {
                             UriHelper.NavigateTo($"ExpIndex/{CurrUser[0].Id}");
