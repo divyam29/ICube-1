@@ -130,9 +130,7 @@
             </div>
             </div>
         </div>
- 
     </div>
-
 </div>
 
 
@@ -153,7 +151,7 @@
     private async Task Otpgen()
     {
         Random rnd = new Random();
-        OTP =  rnd.Next(10000, 99999);
+        OTP =  rnd.Next(100000, 999999);
         string datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         DateTime InDate = DateTime.Parse(datetime);
 
